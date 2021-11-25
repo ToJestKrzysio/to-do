@@ -1,27 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>To Do list</title>
-</head>
-<body>
-    <h1>To Do list</h1>
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    To Do List
+{% endblock title %}
+
+{% block content %}
+    <h1>New Task</h1>
     <br>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="save">
+        {{ form | crispy }}
+        <input type="submit" class="btn btn-success my-4" value="save">
     </form>
 
-    <ul>
-
+    <h2>Tasks To Be Done</h2>
+    <ul class="list-group list-group-flush">
         {% for task in task_list %}
-             <li>{{ task }}</li>
+             <li class="list-group-item">
+                 {{ task }}
+                 <a href="{% url 'todo:delete' task.pk %}" class="btn btn-danger me-auto">
+                    End My Suffering
+                 </a>
+             </li>
         {% endfor %}
-
     </ul>
-</body>
-</html>
+{% endblock content %}
