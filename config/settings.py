@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # custom
     'user.apps.UserConfig',
     'todo.apps.TodoConfig',
+    'home.apps.HomeConfig',
 ]
 
 MIDDLEWARE = [
