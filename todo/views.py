@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -5,9 +6,10 @@ from django.views.generic import CreateView
 from todo.models import Task
 
 
-class TaskView(CreateView):
+class TaskView(LoginRequiredMixin, CreateView):
+    login_url = 'admin:index'
     model = Task
-    fields = ['details', 'owner']
+    fields = ['title', 'details']
     template_name = 'todo/todo.html'
     success_url = reverse_lazy('todo:todo')
 
@@ -23,6 +25,10 @@ class TaskView(CreateView):
                 context['task_list'] = Task.objects.filter(
                     is_done=False, archive=False)
         return context
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 class ArchiveTaskView(View):
