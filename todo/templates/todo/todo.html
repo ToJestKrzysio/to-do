@@ -25,7 +25,7 @@
   <ul class="list-group list-group-flush">
     {% for task in task_list %}
       <li class="list-group-item">
-        {{ task }}
+        {{ task.title }}
         <form class="form-check form-check-inline" method="post"
               action="{% url 'todo:delete' task.pk %}">
           {% csrf_token %}
