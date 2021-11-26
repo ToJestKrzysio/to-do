@@ -11,7 +11,6 @@ class TaskView(LoginRequiredMixin, CreateView):
     model = Task
     fields = ['title', 'details']
     template_name = 'todo/todo.html'
-    success_url = reverse_lazy('todo:todo')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,6 +26,12 @@ class TaskView(LoginRequiredMixin, CreateView):
                 context['task_list'] = Task.objects.filter(
                     is_done=False, archive=False, owner_id=user.id)
         return context
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'todo:filter',
+            kwargs={"filter": self.kwargs.get("filter", None)}
+        )
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
