@@ -11,18 +11,28 @@
     <form method="post">
         {% csrf_token %}
         {{ form | crispy }}
-        <input type="submit" class="btn btn-success my-4" value="save">
+        <button type="submit" class="btn btn-success my-4">save</button>
     </form>
 
-    <h2>Tasks To Be Done</h2>
+    <h2>Task List</h2>
+    <a href="{% url "todo:filter" 'all' %}" class="btn btn-info me-auto">Show All</a>
+    <a href="{% url "todo:filter" 'done' %}" class="btn btn-info me-auto">Show Complete</a>
+    <a href="{% url "todo:todo" %}" class="btn btn-info me-auto">Show Incomplete</a>
+    <hr>
     <ul class="list-group list-group-flush">
         {% for task in task_list %}
-             <li class="list-group-item">
-                 {{ task }}
-                 <a href="{% url 'todo:delete' task.pk %}" class="btn btn-danger me-auto">
-                    End My Suffering
-                 </a>
-             </li>
+            <li class="list-group-item">
+                {{ task }}
+                <form class="form-check form-check-inline" method="post" action="{% url 'todo:delete' task.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger me-auto">End Me</button>
+                </form>
+                <form class="form-check form-check-inline" method="post" class="form-check form-check-inline"action="{% url 'todo:done' task.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success me-auto">Done</button>
+                </form>
+
+            </li>
         {% endfor %}
     </ul>
 {% endblock content %}
