@@ -21,4 +21,4 @@ class Task(models.Model):
         return f'{self.details}'
 
     class Meta:
-        ordering = ['-deadline']
+        ordering = ['deadline']

@@ -1,4 +1,9 @@
+from datetime import timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F, Value
+from django.db.models.functions import Now
+from django.forms import DateField
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -16,16 +21,21 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        # past_due = ExpressionWrapper((F("deadline") - Now()),
+        #                              output_field=BooleanField())
         match self.kwargs.get("filter", None):
             case "all":
                 context['task_list'] = Task.objects.filter(
-                    archive=False, owner_id=user.id)
+                    archive=False, owner_id=user.id).annotate(
+                    time_left=F("deadline") - Now())
             case "done":
                 context['task_list'] = Task.objects.filter(
-                    is_done=True, archive=False, owner_id=user.id)
+                    is_done=True, archive=False, owner_id=user.id).annotate(
+                    time_left=Value(timedelta(days=2)))
             case _:
                 context['task_list'] = Task.objects.filter(
-                    is_done=False, archive=False, owner_id=user.id)
+                    is_done=False, archive=False, owner_id=user.id).annotate(
+                    time_left=F("deadline") - Now())
         return context
 
     def get_success_url(self):
