@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Value
 from django.db.models.functions import Now
-from django.forms import DateField
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
