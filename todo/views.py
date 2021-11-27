@@ -7,7 +7,7 @@ from todo.models import Task
 
 
 class TaskView(LoginRequiredMixin, CreateView):
-    login_url = 'admin:index'
+    login_url = 'user:login'
     model = Task
     fields = ['title', 'details']
     template_name = 'todo/todo.html'
