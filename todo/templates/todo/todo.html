@@ -8,7 +8,7 @@
 {% block content %}
   <h1>New Task</h1>
   <br>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form | crispy }}
     <button type="submit" class="btn btn-success my-4">save</button>
@@ -26,6 +26,7 @@
     {% for task in task_list %}
       <li class="list-group-item">
         {{ task.title }}
+        {{ task.deadline | date:"d-m-Y" }}
         <form class="form-check form-check-inline" method="post"
               action="{% url 'todo:delete' task.pk %}">
           {% csrf_token %}
