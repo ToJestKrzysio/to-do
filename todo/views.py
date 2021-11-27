@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Value
 from django.db.models.functions import Now
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
 
@@ -20,9 +20,8 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        # past_due = ExpressionWrapper((F("deadline") - Now()),
-        #                              output_field=BooleanField())
-        match self.kwargs.get("filter", None):
+        selection = self.kwargs.get("filter", None)
+        match selection:
             case "all":
                 context['task_list'] = Task.objects.filter(
                     archive=False, owner_id=user.id).annotate(
@@ -35,6 +34,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
                 context['task_list'] = Task.objects.filter(
                     is_done=False, archive=False, owner_id=user.id).annotate(
                     time_left=F("deadline") - Now())
+        context["selection"] = selection
         return context
 
     def get_success_url(self):
@@ -55,14 +55,33 @@ class ArchiveTaskView(View):
         if task.owner == request.user or request.user.is_superuser:
             task.archive = True
             task.save()
-        return HttpResponseRedirect(reverse('todo:todo'))
+        return HttpResponseRedirect(reverse_lazy(
+            'todo:filter',
+            kwargs={"filter": self.kwargs.get("filter", None)})
+        )
 
 
 class DoneTaskView(View):
 
-    def post(self, request, pk):
+    def post(self, request, selection, pk):
         task = Task.objects.get(pk=pk)
         if task.owner == request.user or request.user.is_superuser:
             task.is_done = True
             task.save()
-        return HttpResponseRedirect(reverse('todo:todo'))
+        return HttpResponseRedirect(reverse_lazy(
+            'todo:filter',
+            kwargs={"filter": selection})
+        )
+
+
+class UndoArchiveTaskView(View):
+
+    def post(self, request, selection, pk):
+        task = Task.objects.get(pk=pk)
+        if task.owner == request.user or request.user.is_superuser:
+            task.is_done = False
+            task.save()
+        return HttpResponseRedirect(reverse_lazy(
+            'todo:filter',
+            kwargs={"filter": selection})
+        )

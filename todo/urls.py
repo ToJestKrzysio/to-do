@@ -5,7 +5,8 @@ app_name = 'todo'
 
 urlpatterns = [
     path('', views.TaskCreateView.as_view(), name='todo'),
-    path('delete/<int:pk>', views.ArchiveTaskView.as_view(), name="delete"),
-    path('done/<int:pk>', views.DoneTaskView.as_view(), name="done"),
+    path('delete/<int:pk>/<str:selection>', views.ArchiveTaskView.as_view(), name="delete"),
+    path('done/<int:pk>/<str:selection>', views.DoneTaskView.as_view(), name="done"),
+    path('undo/<int:pk>/<str:selection>', views.UndoArchiveTaskView.as_view(), name="undo"),
     path('filter/<str:filter>', views.TaskCreateView.as_view(), name="filter"),
 ]
