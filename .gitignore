@@ -5,3 +5,5 @@
 .env.db
 .coverage
 .migrations
+
+*/0002_superuser.py

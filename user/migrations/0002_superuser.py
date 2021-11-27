@@ -8,9 +8,9 @@ def generate_superuser(apps, schema_editor):
     from django.contrib.auth import get_user_model
     User = get_user_model()
 
-    DJANGO_SU_NAME = None
-    DJANGO_SU_EMAIL = None
-    DJANGO_SU_PASSWORD = None
+    DJANGO_SU_NAME = 'aa'
+    DJANGO_SU_EMAIL = 'aa@aa.com'
+    DJANGO_SU_PASSWORD = 'aa'
 
     User.objects.create_superuser(
         username=DJANGO_SU_NAME,
