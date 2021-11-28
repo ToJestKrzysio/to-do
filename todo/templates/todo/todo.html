@@ -19,7 +19,7 @@
       <h2>Task List</h2>
     </div>
     <div class="col-auto">
-      <div class="btn-group" role="group" aria-label="$button-group$" style="">
+      <div class="btn-group" role="group" aria-label="$button-group$">
         <a href="{% url "todo:filter" 'all' %}" style="width: 5rem"
            class="btn btn-secondary">All</a>
         <a href="{% url "todo:filter" 'done' %}" style="width: 5rem"
@@ -32,8 +32,6 @@
   <hr>
   {% for task in task_list %}
     <div class="card my-4" style="width: 100%">
-
-
       <div class="card-header">
         <div class="row">
           <div class="col-auto me-auto">
@@ -46,15 +44,26 @@
           <div class="col-auto">
             {% if not task.is_done %}
               <form class="form-check-inline mx-0" method="post"
-                    action="{% url 'todo:done' task.pk %}">
+                    action="{% url 'todo:done' task.pk selection %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-success">Done</button>
+                <button type="submit" class="btn btn-success"
+                        style="width: 5rem">Done
+                </button>
+              </form>
+            {% else %}
+              <form class="form-check-inline mx-0" method="post"
+                    action="{% url 'todo:undo' task.pk selection %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary"
+                        style="width: 5rem">Undo
+                </button>
               </form>
             {% endif %}
             <form class="form-check-inline mx-0" method="post"
-                  action="{% url 'todo:delete' task.pk %}">
+                  action="{% url 'todo:delete' task.pk selection %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Delete</button>
+              <button type="submit" class="btn btn-danger"
+                      style="width: 5rem">Delete</button>
             </form>
           </div>
         </div>
@@ -67,14 +76,14 @@
           <div class="col-auto">
             {% if task.is_done %}
               <p class="text-success">
-            {% elif task.time_left.days >= 2 %}
+                {% elif task.time_left.days >= 2 %}
               <p class="text-muted">
-            {% elif task.time_left.days >= 0 %}
+                {% elif task.time_left.days >= 0 %}
               <p class="text-warning">
-            {% else %}
+                {% else %}
               <p class="text-danger font-weight-bold">
             {% endif %}
-              Deadline: {{ task.deadline | date:"d-m-Y" }}</p>
+            Deadline: {{ task.deadline | date:"d-m-Y" }}</p>
           </div>
         </div>
         <p class="card-text">{{ task.details }}</p>
