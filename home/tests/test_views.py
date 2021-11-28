@@ -13,3 +13,4 @@ def test_home_view_template(get_home_view_response):
         template.name for template in get_home_view_response.templates
     }
     assert "home/home.html" in templates
+    assert "base.html" in templates
