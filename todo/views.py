@@ -48,22 +48,22 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ArchiveTaskView(View):
+class ArchiveTaskView(LoginRequiredMixin, View):
 
-    def post(self, request, pk):
+    def post(self, request, selection, pk):
         task = Task.objects.get(pk=pk)
         if task.owner == request.user or request.user.is_superuser:
             task.archive = True
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": self.kwargs.get("filter", None)})
+            kwargs={"filter": selection})
         )
 
 
-class DoneTaskView(View):
+class DoneTaskView(LoginRequiredMixin, View):
 
-    def post(self, request, selection, pk):
+    def post(self, request, pk, selection):
         task = Task.objects.get(pk=pk)
         if task.owner == request.user or request.user.is_superuser:
             task.is_done = True
@@ -74,9 +74,9 @@ class DoneTaskView(View):
         )
 
 
-class UndoArchiveTaskView(View):
+class UndoArchiveTaskView(LoginRequiredMixin, View):
 
-    def post(self, request, selection, pk):
+    def post(self, request, pk, selection):
         task = Task.objects.get(pk=pk)
         if task.owner == request.user or request.user.is_superuser:
             task.is_done = False
