@@ -40,11 +40,13 @@ INSTALLED_APPS = [
 
     # 3rd party
     'crispy_forms',
+    'rest_framework',
 
     # custom
     'user.apps.UserConfig',
     'todo.apps.TodoConfig',
     'home.apps.HomeConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
