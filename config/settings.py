@@ -140,3 +140,4 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Auth
 LOGIN_REDIRECT_URL = "todo:todo"
 LOGOUT_REDIRECT_URL = "home:home"
+LOGIN_URL = "user:login"

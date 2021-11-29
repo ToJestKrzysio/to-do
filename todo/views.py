@@ -12,7 +12,6 @@ from todo.models import Task
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
-    login_url = 'user:login'
     model = Task
     fields = ['title', 'details', 'deadline']
     template_name = 'todo/todo.html'
@@ -20,7 +19,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        selection = self.kwargs.get("filter", None)
+        selection = self.kwargs.get("selection", None)
         match selection:
             case "all":
                 context['task_list'] = Task.objects.filter(
@@ -40,7 +39,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy(
             'todo:filter',
-            kwargs={"filter": self.kwargs.get("filter", None)}
+            kwargs={"selection": self.kwargs.get("selection", None)}
         )
 
     def form_valid(self, form):
@@ -57,7 +56,7 @@ class ArchiveTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )
 
 
@@ -70,11 +69,11 @@ class DoneTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )
 
 
-class UndoArchiveTaskView(LoginRequiredMixin, View):
+class UndoDoneTaskView(LoginRequiredMixin, View):
 
     def post(self, request, pk, selection):
         task = Task.objects.get(pk=pk)
@@ -83,5 +82,5 @@ class UndoArchiveTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )
