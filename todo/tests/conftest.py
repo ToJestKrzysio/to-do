@@ -30,6 +30,13 @@ def user_task(client, django_user_model, user):
                         owner_id=user.id, pk=1)
     return task
 
+@pytest.fixture
+def user_task_done(client, django_user_model, user):
+    task = Task.objects.create(is_done=True, archive=False, details="details",
+                        title="Test", deadline=timezone.now(),
+                        owner_id=user.id, pk=1)
+    return task
+
 
 @pytest.fixture
 def superuser(client, django_user_model):

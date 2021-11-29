@@ -74,7 +74,7 @@ class DoneTaskView(LoginRequiredMixin, View):
         )
 
 
-class UndoArchiveTaskView(LoginRequiredMixin, View):
+class UndoDoneTaskView(LoginRequiredMixin, View):
 
     def post(self, request, pk, selection):
         task = Task.objects.get(pk=pk)
