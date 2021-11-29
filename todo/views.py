@@ -39,7 +39,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy(
             'todo:filter',
-            kwargs={"filter": self.kwargs.get("filter", None)}
+            kwargs={"selection": self.kwargs.get("selection", None)}
         )
 
     def form_valid(self, form):
@@ -56,7 +56,7 @@ class ArchiveTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )
 
 
@@ -69,7 +69,7 @@ class DoneTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )
 
 
@@ -82,5 +82,5 @@ class UndoDoneTaskView(LoginRequiredMixin, View):
             task.save()
         return HttpResponseRedirect(reverse_lazy(
             'todo:filter',
-            kwargs={"filter": selection})
+            kwargs={"selection": selection})
         )

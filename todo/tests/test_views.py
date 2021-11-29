@@ -11,9 +11,9 @@ class TestTaskCreateView:
         "/todo/",
         reverse("todo:todo"),
         "/todo/filter/all",
-        reverse("todo:filter", kwargs={"filter": "all"}),
+        reverse("todo:filter", kwargs={"selection": "all"}),
         "/todo/filter/done",
-        reverse("todo:filter", kwargs={"filter": "done"}),
+        reverse("todo:filter", kwargs={"selection": "done"}),
     ])
     def test_for_unauthenticated_user(self, client, url, user):
         """ Unauthenticated user should be redirected to login page. """
@@ -27,9 +27,9 @@ class TestTaskCreateView:
         "/todo/",
         reverse("todo:todo"),
         "/todo/filter/all",
-        reverse("todo:filter", kwargs={"filter": "all"}),
+        reverse("todo:filter", kwargs={"selection": "all"}),
         "/todo/filter/done",
-        reverse("todo:filter", kwargs={"filter": "done"}),
+        reverse("todo:filter", kwargs={"selection": "done"}),
     ])
     def test_response_code_for_authenticated_user(self, client, url, user):
         client.force_login(user)
