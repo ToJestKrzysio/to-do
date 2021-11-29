@@ -5,6 +5,46 @@ from todo.models import Task
 
 
 @pytest.mark.django_db
+class TestTaskCreateView:
+
+    @pytest.mark.parametrize("url", [
+        "/todo/",
+        reverse("todo:todo"),
+        "/todo/filter/all",
+        reverse("todo:filter", kwargs={"filter": "all"}),
+        "/todo/filter/done",
+        reverse("todo:filter", kwargs={"filter": "done"}),
+    ])
+    def test_for_unauthenticated_user(self, client, url, user):
+        """ Unauthenticated user should be redirected to login page. """
+        response = client.get(url)
+
+        assert response.status_code == 302
+        assert "user/login/?next=/" in response.url
+        assert "todo/todo" in response.url or "todo/filter/"
+
+    @pytest.mark.parametrize("url", [
+        "/todo/",
+        reverse("todo:todo"),
+        "/todo/filter/all",
+        reverse("todo:filter", kwargs={"filter": "all"}),
+        "/todo/filter/done",
+        reverse("todo:filter", kwargs={"filter": "done"}),
+    ])
+    def test_response_code_for_authenticated_user(self, client, url, user):
+        client.force_login(user)
+        response = client.get(url)
+
+        assert response.status_code == 200
+
+    def test_template_for_authenticated_user(self, todo_page_auth_response):
+        templates = {temp.name for temp in todo_page_auth_response.templates}
+
+        assert "base.html" in templates
+        assert "todo/todo.html" in templates
+
+
+@pytest.mark.django_db
 class TestArchiveTaskView:
 
     @pytest.mark.parametrize("url", [
@@ -23,7 +63,7 @@ class TestArchiveTaskView:
         response = client.post(url)
 
         assert response.status_code == 302
-        assert "accounts/login/?next=/todo/delete/" in response.url
+        assert "user/login/?next=/todo/delete/" in response.url
         assert len(Task.objects.filter(archive=False)) == 1
 
     @pytest.mark.parametrize("url", [
@@ -109,7 +149,7 @@ class TestDoneTaskView:
         response = client.post(url)
 
         assert response.status_code == 302
-        assert "accounts/login/?next=/todo/done/" in response.url
+        assert "user/login/?next=/todo/done/" in response.url
         assert len(Task.objects.filter(is_done=False)) == 1
 
     @pytest.mark.parametrize("url", [
@@ -189,14 +229,13 @@ class TestUndoDoneTaskView:
         User should be redirected to login page,
         selected task is_done field should be unaffected.
         """
-        Task.objects.get(pk=1).is_done = True
         assert len(Task.objects.filter(is_done=True)) == 1
         assert len(Task.objects.filter(is_done=False)) == 0
 
         response = client.post(url)
 
         assert response.status_code == 302
-        assert "accounts/login/?next=/todo/undo/" in response.url
+        assert "user/login/?next=/todo/undo/" in response.url
         assert len(Task.objects.filter(is_done=True)) == 1
         assert len(Task.objects.filter(is_done=False)) == 0
 
@@ -210,7 +249,6 @@ class TestUndoDoneTaskView:
         completion. User should be redirected to filter view with appropriate
         selection, selected task is_done field should be set to False.
         """
-        Task.objects.get(pk=1).is_done = True
         assert len(Task.objects.filter(is_done=True)) == 1
         assert len(Task.objects.filter(is_done=False)) == 0
 
@@ -232,7 +270,6 @@ class TestUndoDoneTaskView:
         User should be redirected to filter view with appropriate selection,
         selected task is_done field should be set to False.
         """
-        Task.objects.get(pk=1).is_done = True
         assert len(Task.objects.filter(is_done=True)) == 1
         assert len(Task.objects.filter(is_done=False)) == 0
 
@@ -256,7 +293,6 @@ class TestUndoDoneTaskView:
         User should be redirected to filter view with appropriate selection,
         selected task is_done field should be unaffected.
         """
-        task = Task.objects.get(pk=1).is_done = True
         assert len(Task.objects.filter(is_done=True)) == 1
         assert len(Task.objects.filter(is_done=False)) == 0
 

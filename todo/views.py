@@ -12,7 +12,6 @@ from todo.models import Task
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
-    login_url = 'user:login'
     model = Task
     fields = ['title', 'details', 'deadline']
     template_name = 'todo/todo.html'
@@ -20,7 +19,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        selection = self.kwargs.get("filter", None)
+        selection = self.kwargs.get("selection", None)
         match selection:
             case "all":
                 context['task_list'] = Task.objects.filter(
